@@ -5,6 +5,7 @@ import productsData from '../data/products.json';
 import ProductCard from '../components/ProductCard';
 import SystemLoader from '../components/SystemLoader';
 import { useWishlist } from '../context/WishlistContext';
+import { useTheme } from '../context/ThemeContext';
 
 const CATEGORIES = ['All', 'Hoodies', 'Jackets', 'T-Shirts', 'Bottoms', 'Footwear', 'Accessories'];
 const COLORS = ['Black', 'Neon Pink', 'Cyan', 'Silver', 'White'];
@@ -60,8 +61,27 @@ const ProductList = () => {
         );
     };
 
+    const { isHacked } = useTheme();
+
     const filteredAndSortedProducts = useMemo(() => {
         let result = [...productsData];
+
+        if (isHacked) {
+            const secretProduct = {
+                id: '999',
+                title: 'Admin Override Key',
+                price: 0.00,
+                description: 'QUANTUM ENCRYPTION KEY. AUTHORIZES FULL SYSTEM ACCESS. DO NOT DISTRIBUTE.',
+                category: 'Accessories',
+                image: '/images/products/tech-key.jpg', // Placeholder image path
+                rating: 5.0,
+                reviews: 0,
+                material: 'Silicon-Graphite',
+                color: 'Neon Red',
+                sizes: ['N/A']
+            };
+            result.unshift(secretProduct);
+        }
 
         if (showStash) {
             // Filter by items currently in the wishlist
@@ -102,7 +122,7 @@ const ProductList = () => {
         }
 
         return result;
-    }, [categoryFilter, selectedColors, selectedSizes, selectedMaterials, sortOption, showStash, wishlist]);
+    }, [categoryFilter, selectedColors, selectedSizes, selectedMaterials, sortOption, showStash, wishlist, isHacked]);
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -23,11 +23,24 @@ import { useCart } from './context/CartContext';
 const ProductList = lazy(() => import('./pages/ProductList'));
 const ProductDetail = lazy(() => import('./pages/ProductDetail'));
 
+import { useTheme } from './context/ThemeContext';
+import useKonamiCode from './hooks/useKonamiCode';
+
 function App() {
     const { toastMessage, showToast } = useCart();
+    const { isHacked, setIsHacked } = useTheme();
     const location = useLocation();
     const lenis = useLenis();
     const [bootComplete, setBootComplete] = useState(false);
+    const [triggerShake, setTriggerShake] = useState(false);
+
+    // Listen for Konami Code
+    useKonamiCode(() => {
+        setIsHacked(true);
+        setTriggerShake(true);
+        setTimeout(() => setTriggerShake(false), 500);
+        showToast("CYBER-PSYCHOSIS DETECTED: SYSTEM OVERRIDE ACTIVE.");
+    });
 
     // Lock scroll on mount until boot finishes, and ensure resizing on route change
     useEffect(() => {
@@ -71,7 +84,10 @@ function App() {
     });
 
     return (
-        <div className="flex flex-col min-h-screen bg-[#050505] text-white selection:bg-neon-blue selection:text-black relative">
+        <div className={`flex flex-col min-h-screen selection:bg-neon-blue selection:text-black relative transition-colors duration-500 
+            ${isHacked ? 'hacked-bg hacked-text bg-red-950 text-red-500' : 'bg-[#050505] text-white'}
+            ${triggerShake ? 'violent-shake' : ''}`}>
+
             <VaultBoot onComplete={() => {
                 setBootComplete(true);
                 if (lenis) {
@@ -82,7 +98,8 @@ function App() {
 
             {/* Scroll Progress Bar */}
             <motion.div
-                className="fixed top-0 left-0 right-0 h-1 bg-neon-blue origin-left z-[100] shadow-[0_0_10px_rgba(0,240,255,0.7)]"
+                className={`fixed top-0 left-0 right-0 h-1 origin-left z-[100] transition-colors duration-500 
+                    ${isHacked ? 'bg-red-500 shadow-[0_0_10px_rgba(255,0,0,0.7)]' : 'bg-neon-blue shadow-[0_0_10px_rgba(0,240,255,0.7)]'}`}
                 style={{ scaleX }}
             />
 
@@ -100,17 +117,19 @@ function App() {
             </main>
 
             {/* Global Live Activity Ticker */}
-            <div className="w-full bg-neon-blue/10 border-y border-neon-blue/20 py-2 overflow-hidden whitespace-nowrap backdrop-blur-sm mt-auto">
-                <div className="flex animate-marquee gap-10 text-xs font-mono text-neon-blue uppercase w-max">
+            <div className={`w-full border-y py-2 overflow-hidden whitespace-nowrap backdrop-blur-sm mt-auto transition-colors duration-500 
+                ${isHacked ? 'bg-red-500/10 border-red-500/20' : 'bg-neon-blue/10 border-neon-blue/20'}`}>
+                <div className={`flex animate-marquee gap-10 text-xs font-mono uppercase w-max transition-colors duration-500 
+                    ${isHacked ? 'text-red-500' : 'text-neon-blue'}`}>
                     {/* Double the content to ensure smooth infinite loop */}
-                    <span>● SYSTEM STATUS: OPTIMAL</span>
-                    <span>● NEW DROP: PHANTOM TECH-JACKET IN STOCK</span>
-                    <span>● GLOBAL ORDERS: 1,402 IN LAST 24H</span>
-                    <span>● ENCRYPTED CONNECTION ESTABLISHED</span>
-                    <span>● SYSTEM STATUS: OPTIMAL</span>
-                    <span>● NEW DROP: PHANTOM TECH-JACKET IN STOCK</span>
-                    <span>● GLOBAL ORDERS: 1,402 IN LAST 24H</span>
-                    <span>● ENCRYPTED CONNECTION ESTABLISHED</span>
+                    <span>● SYSTEM STATUS: {isHacked ? 'COMPROMISED' : 'OPTIMAL'}</span>
+                    <span>● {isHacked ? 'TERMINAL BREACH DETECTED' : 'NEW DROP: PHANTOM TECH-JACKET IN STOCK'}</span>
+                    <span>● GLOBAL ORDERS: {isHacked ? 'ERROR' : '1,402 IN LAST 24H'}</span>
+                    <span>● {isHacked ? 'ADMIN OVERRIDE KEY GENERATED' : 'ENCRYPTED CONNECTION ESTABLISHED'}</span>
+                    <span>● SYSTEM STATUS: {isHacked ? 'COMPROMISED' : 'OPTIMAL'}</span>
+                    <span>● {isHacked ? 'TERMINAL BREACH DETECTED' : 'NEW DROP: PHANTOM TECH-JACKET IN STOCK'}</span>
+                    <span>● GLOBAL ORDERS: {isHacked ? 'ERROR' : '1,402 IN LAST 24H'}</span>
+                    <span>● {isHacked ? 'ADMIN OVERRIDE KEY GENERATED' : 'ENCRYPTED CONNECTION ESTABLISHED'}</span>
                 </div>
             </div>
 

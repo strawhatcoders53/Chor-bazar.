@@ -7,6 +7,8 @@ import { CartProvider } from './context/CartContext.jsx'
 import { WishlistProvider } from './context/WishlistContext.jsx'
 import SmoothScroll from './components/SmoothScroll.jsx'
 
+import { ThemeProvider } from './context/ThemeContext.jsx'
+
 class ErrorBoundary extends React.Component {
     constructor(props) {
         super(props);
@@ -44,13 +46,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <ErrorBoundary>
             <BrowserRouter>
-                <CartProvider>
-                    <WishlistProvider>
-                        <SmoothScroll>
-                            <App />
-                        </SmoothScroll>
-                    </WishlistProvider>
-                </CartProvider>
+                <ThemeProvider>
+                    <CartProvider>
+                        <WishlistProvider>
+                            <SmoothScroll>
+                                <App />
+                            </SmoothScroll>
+                        </WishlistProvider>
+                    </CartProvider>
+                </ThemeProvider>
             </BrowserRouter>
         </ErrorBoundary>
     </React.StrictMode>,

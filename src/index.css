@@ -180,6 +180,49 @@
     pointer-events: none;
     will-change: opacity, transform;
   }
+
+  .hacked-bg {
+    @apply bg-red-950 transition-colors duration-500 !important;
+  }
+
+  .hacked-text {
+    @apply text-red-500 border-red-500 transition-colors duration-500 !important;
+  }
+
+  .violent-shake {
+    animation: violent-shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  @keyframes violent-shake {
+
+    10%,
+    90% {
+      transform: translate3d(-10px, -10px, 0) scale(1.02);
+      filter: brightness(1.5) hue-rotate(90deg);
+    }
+
+    20%,
+    80% {
+      transform: translate3d(20px, 20px, 0) scale(0.98);
+      filter: brightness(0.5) contrast(200%);
+    }
+
+    30%,
+    50%,
+    70% {
+      transform: translate3d(-30px, -30px, 0) scale(1.1);
+      filter: invert(1);
+    }
+
+    40%,
+    60% {
+      transform: translate3d(40px, 40px, 0) rotate(5deg);
+      filter: blur(2px);
+    }
+  }
 }
 
 /* Custom Scrollbar */

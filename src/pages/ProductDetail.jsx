@@ -12,6 +12,8 @@ import { QRCodeSVG } from 'qrcode.react';
 import { createHum } from '../utils/audioSynth';
 import { useLenis } from '@studio-freight/react-lenis';
 
+import ShoeViewer3D from '../components/ShoeViewer3D';
+
 const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -24,6 +26,7 @@ const ProductDetail = () => {
     const [selectedSize, setSelectedSize] = useState('L');
     const [isAdding, setIsAdding] = useState(false);
     const [isARModalOpen, setIsARModalOpen] = useState(false);
+    const [show3DViewer, setShow3DViewer] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -33,6 +36,11 @@ const ProductDetail = () => {
             setProduct(foundProduct);
             setIsLoading(false);
             window.scrollTo(0, 0);
+
+            // Auto-enable 3D for Footwear
+            if (foundProduct?.category === 'Footwear') {
+                setShow3DViewer(true);
+            }
         }, 500);
         return () => clearTimeout(timer);
     }, [id]);
@@ -87,18 +95,41 @@ const ProductDetail = () => {
             </button>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24">
-                {/* Images */}
-                <div className="space-y-4">
-                    <div className="relative aspect-[4/5] bg-dark-800 rounded-2xl overflow-hidden border border-dark-700 shadow-xl group">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-dark-900/60 to-transparent z-10 pointer-events-none"></div>
-                        <img
-                            src={product.image}
-                            alt={product.title}
-                            className="w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-105"
-                        />
-                        {product.stock < 10 && (
-                            <div className="absolute top-4 right-4 z-20 bg-neon-pink text-white text-xs font-bold px-3 py-1.5 rounded uppercase tracking-wider shadow-[0_0_10px_rgba(255,0,60,0.5)]">
-                                Only {product.stock} Left
+                {/* Images / 3D Viewer */}
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => setShow3DViewer(false)}
+                                className={`text-[10px] font-bold uppercase tracking-widest pb-1 border-b-2 transition-all ${!show3DViewer ? 'border-neon-blue text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}
+                            >
+                                Satellite Asset
+                            </button>
+                            <button
+                                onClick={() => setShow3DViewer(true)}
+                                className={`text-[10px] font-bold uppercase tracking-widest pb-1 border-b-2 transition-all ${show3DViewer ? 'border-neon-blue text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}
+                            >
+                                3D Kinetic Model
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="3d-viewer-container h-[400px]">
+                        {show3DViewer ? (
+                            <ShoeViewer3D />
+                        ) : (
+                            <div className="relative aspect-[4/5] bg-dark-800 rounded-2xl overflow-hidden border border-dark-700 shadow-xl group">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-dark-900/60 to-transparent z-10 pointer-events-none"></div>
+                                <img
+                                    src={product.image}
+                                    alt={product.title}
+                                    className="w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-105"
+                                />
+                                {product.stock < 10 && (
+                                    <div className="absolute top-4 right-4 z-20 bg-neon-pink text-white text-xs font-bold px-3 py-1.5 rounded uppercase tracking-wider shadow-[0_0_10px_rgba(255,0,60,0.5)]">
+                                        Only {product.stock} Left
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
